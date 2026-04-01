@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>给杂鱼哥哥</title>
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: '微软雅黑', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(255, 100, 200, 0.3);
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #ff6b9d;
+            margin-bottom: 20px;
+            animation: glow 2s infinite alternate;
+        }
+
+        &#64;keyframes glow {
+            from {
+                text-shadow: 0 0 10px #ff6b9d;
+            }
+            to {
+                text-shadow: 0 0 20px #ff99cc, 0 0 30px #ff6b9d;
+            }
+        }
+
+        .letter {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        .letter .name {
+            color: #ff99cc;
+            font-weight: bold;
+        }
+
+        button {
+            margin-top: 30px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            background: #ff6b9d;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #ff99cc;
+        }
+
+        /* 粒子背景 */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: red;
+            transform: rotate(45deg);
+            pointer-events: none;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: red;
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            top: -10px;
+            left: 0;
+        }
+
+        .heart::after {
+            left: -10px;
+            top: 0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="container" style="z-index: 1;">
+        <h1>给 Koubly_Yao</h1>
+        <div class="letter">
+            <p>亲爱的小<span class="name">杂鱼哥哥</span>：</p>
+            <p>从第一次见到你的那一刻起，</p>
+            <p>我的心跳就像失去了控制的频率，</p>
+            <p>你的笑容，你的声音，你的一切，</p>
+            <p>都让我的世界变得不再一样。</p>
+            <p>我想和你一起看日出日落，</p>
+            <p>想和你一起走过每一个四季，</p>
+            <p>想告诉你——</p>
+            <p style="font-size: 1.8rem; color: #ff6b9d;">我喜欢你</p>
+            <p>不是因为你是谁，</p>
+            <p>而是因为和你在一起时，</p>
+            <p>我知道了什么是真正的幸福。</p>
+            <p>愿我的心意能传达给你 💕</p>
+        </div>
+        <button onclick="sendHeart()">确认心意</button>
+    </div>
+
+    <script>
+        // 粒子背景动画
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const particles = [];
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.radius = Math.random() * 2 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > width) this.speedX *= -1;
+                if (this.y < 0 || this.y > height) this.speedY *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles.length = 0;
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            for (let p of particles) {
+                p.update();
+                p.draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        // 按钮点击 - 发送爱心
+function sendHeart() {
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.style.left = Math.random() * window.innerWidth + 'px';
+    heart.style.top = window.innerHeight + 'px';
+    heart.style.width = heart.style.height = '20px';
+    heart.style.background = '#ff6b9d';
+    document.body.appendChild(heart);
+
+    let scale = 1;
+    let opacity = 1;
+    let top = window.innerHeight;
+
+    const interval = setInterval(() => {
+        top -= 3;              // 放慢上升速度（原来是5）
+        scale += 0.01;         // 放慢放大速度
+        opacity -= 0.01;       // 慢慢消失
+        heart.style.top = top + 'px';
+        heart.style.transform = `scale(${scale}) rotate(45deg)`;
+        heart.style.opacity = opacity;
+
+        if (top < -50 || opacity <= 0) {
+            clearInterval(interval);
+            heart.remove();
+        }
+    }, 30); // 原来是 16ms（约60fps），现在稍微慢一点更流畅
+}
+
+       // 鼠标特效（爱心跟随）
+document.addEventListener('mousemove', e => {
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.style.left = e.clientX + 'px';
+    heart.style.top = e.clientY + 'px';
+    heart.style.width = heart.style.height = '8px';  /* 调小了尺寸 */
+    heart.style.background = '#ff99cc';
+    heart.style.borderRadius = '50%';
+    heart.style.position = 'absolute';
+    heart.style.transform = 'rotate(45deg)';
+    heart.style.pointerEvents = 'none';
+    heart.style.zIndex = '9999';
+    document.body.appendChild(heart);
+
+    // 慢慢透明消失
+    setTimeout(() => {
+        heart.style.opacity = 0;
+        setTimeout(() => heart.remove(), 300);
+    }, 500);
+});
+    </script>
+</body>
+</html>
